@@ -230,9 +230,11 @@ void MediaMovie::doSimilar() {
         },
         [ASYNC_TOKEN](const std::string& ex) {
             ASYNC_RELEASE
+            (void)ex;
+            // 飞牛影视未实现 Similar 接口（返回 HTML），静默隐藏相似推荐
             this->similar->setVisibility(brls::Visibility::GONE);
-            this->labelSimilar->setSubtitle(ex);
-            brls::Application::notify(ex);
+            this->labelSimilar->setVisibility(brls::Visibility::GONE);
+            this->similar->clearData();
         },
         jellyfin::apiSimilar, this->itemId, query);
 }

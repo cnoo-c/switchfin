@@ -64,11 +64,11 @@ public:
         this->spanCount = brls::getStyle().getMetric("app/grid/6");
 
         std::string query = HTTP::encode_form({
-            {"userId", AppConfig::instance().getUserId()},
-            {"parentId", itemId},
-            {"includeItemTypes", itemType},
-            {"enableImageTypes", "Primary"},
-            {"recursive", "true"},
+            {"UserId", AppConfig::instance().getUserId()},
+            {"ParentId", itemId},
+            {"IncludeItemTypes", itemType},
+            {"EnableImageTypes", "Primary"},
+            {"Recursive", "true"},
         });
 
         ASYNC_RETAIN
@@ -99,12 +99,12 @@ public:
 
     void doRequest() {
         std::string query = HTTP::encode_form({
-            {"userId", AppConfig::instance().getUserId()},
-            {"parentId", this->itemId},
-            {"limit", std::to_string(this->pageSize)},
-            {"startIndex", std::to_string(this->start)},
-            {"enableImageTypes", "Primary"},
-            {"recursive", "true"},
+            {"UserId", AppConfig::instance().getUserId()},
+            {"ParentId", this->itemId},
+            {"Limit", std::to_string(this->pageSize)},
+            {"StartIndex", std::to_string(this->start)},
+            {"EnableImageTypes", "Primary"},
+            {"Recursive", "true"},
         });
 
         ASYNC_RETAIN
@@ -309,21 +309,21 @@ void MediaCollection::doRequest() {
     if (MediaFilter::selectedUnplayed) filters.push_back("IsUnplayed");
 
     HTTP::Form query = {
-        {"parentId", this->itemId},
-        {"sortBy", MediaFilter::sortList[MediaFilter::selectedSort]},
-        {"sortOrder", MediaFilter::selectedOrder ? "Descending" : "Ascending"},
-        {"fields", "PrimaryImageAspectRatio,Chapters,BasicSyncInfo"},
-        {"enableImageTypes", "Primary"},
-        {"filters", fmt::format("{}", fmt::join(filters, ","))},
-        {"limit", std::to_string(this->pageSize)},
-        {"startIndex", std::to_string(this->startIndex)},
+        {"ParentId", this->itemId},
+        {"SortBy", MediaFilter::sortList[MediaFilter::selectedSort]},
+        {"SortOrder", MediaFilter::selectedOrder ? "Descending" : "Ascending"},
+        {"Fields", "PrimaryImageAspectRatio,Chapters,BasicSyncInfo"},
+        {"EnableImageTypes", "Primary"},
+        {"Filters", fmt::format("{}", fmt::join(filters, ","))},
+        {"Limit", std::to_string(this->pageSize)},
+        {"StartIndex", std::to_string(this->startIndex)},
     };
     if (this->genresId.size() > 0) {
-        query["genreIds"] = this->genresId;
+        query["GenreIds"] = this->genresId;
     }
     if (this->itemType.size() > 0) {
-        query["includeItemTypes"] = this->itemType;
-        query["recursive"] = "true";
+        query["IncludeItemTypes"] = this->itemType;
+        query["Recursive"] = "true";
     }
 
     ASYNC_RETAIN

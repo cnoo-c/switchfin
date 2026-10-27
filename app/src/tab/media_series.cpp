@@ -208,9 +208,11 @@ void MediaSeries::doSimilar() {
         },
         [ASYNC_TOKEN](const std::string& ex) {
             ASYNC_RELEASE
+            (void)ex;
+            // 飞牛影视未实现 Similar 接口（返回 HTML），静默隐藏相似推荐
             this->similar->setVisibility(brls::Visibility::GONE);
-            this->labelSimilar->setSubtitle(ex);
-            brls::Application::notify(ex);
+            this->labelSimilar->setVisibility(brls::Visibility::GONE);
+            this->similar->clearData();
         },
         jellyfin::apiSimilar, this->seriesId, query);
 }
@@ -232,9 +234,11 @@ void MediaSeries::doSpecial() {
         },
         [ASYNC_TOKEN](const std::string& ex) {
             ASYNC_RELEASE
+            (void)ex;
+            // 飞牛影视未实现 SpecialFeatures 接口（返回 HTML），静默隐藏
             this->special->setVisibility(brls::Visibility::GONE);
-            this->labelSpecial->setSubtitle(ex);
-            brls::Application::notify(ex);
+            this->labelSpecial->setVisibility(brls::Visibility::GONE);
+            this->special->clearData();
         },
         jellyfin::apiItemSpecial, AppConfig::instance().getUserId(), this->seriesId);
 }

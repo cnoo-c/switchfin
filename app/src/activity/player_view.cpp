@@ -366,9 +366,30 @@ void PlayerView::playMedia(const uint64_t seekTicks) {
 
             VideoView::close();
         },
-        [ASYNC_TOKEN](const std::string& ex) {
+        [ASYNC_TOKEN, seekTicks](const std::string& ex) {
             ASYNC_RELEASE
-            Dialog::show(ex, []() { VideoView::close(); });
+            // 飞牛影视等服务器不实现 PlaybackInfo（返回 HTML 页面导致解析失败），
+            // 回退为直连播放：其 stream 接口只认 X-Emby-Authorization 头，
+            // 由 mpv 通过 http-header-fields 携带。
+            brls::Logger::info("PlaybackInfo failed ({}), fallback to direct play", ex);
+            auto& mpv = MPVCore::instance();
+            auto& svr = AppConfig::instance().getUrl();
+            std::stringstream ssextra;
+            ssextra << fmt::format("network-timeout={}", HTTP::TIMEOUT / 100);
+            if (seekTicks > 0) ssextra << ",start=" << misc::sec2Time(seekTicks / jellyfin::PLAYTICKS);
+            ssextra << fmt::format(",http-header-fields='X-Emby-Authorization: Token={}'",
+                AppConfig::instance().getToken());
+
+            std::string srcId = this->sourceId.empty() ? this->itemId : this->sourceId;
+            std::string url = fmt::format(fmt::runtime(jellyfin::apiStream), this->itemId,
+                HTTP::encode_form({
+                    {"Static", "true"},
+                    {"MediaSourceId", srcId},
+                }));
+
+            this->playMethod = jellyfin::methodDirectPlay;
+            this->stream.Id = srcId;
+            mpv.setUrl(svr + url, ssextra.str());
         },
         jellyfin::apiPlayback, this->itemId);
 }

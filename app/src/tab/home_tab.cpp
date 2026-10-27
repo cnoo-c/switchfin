@@ -16,11 +16,11 @@ HomeTab::HomeTab() {
 
     this->userResume->onQuery([](size_t start, size_t pageSize) {
         std::string query = HTTP::encode_form({
-            {"enableImageTypes", "Primary,Backdrop,Thumb"},
-            {"mediaTypes", "Video"},
-            {"fields", "BasicSyncInfo,Chapters"},
-            {"limit", std::to_string(pageSize)},
-            {"startIndex", std::to_string(start)},
+            {"EnableImageTypes", "Primary,Backdrop,Thumb"},
+            {"MediaTypes", "Video"},
+            {"Fields", "BasicSyncInfo,Chapters"},
+            {"Limit", std::to_string(pageSize)},
+            {"StartIndex", std::to_string(start)},
         });
         return fmt::format(fmt::runtime(jellyfin::apiUserResume), AppConfig::instance().getUserId(), query);
     });
@@ -31,14 +31,14 @@ HomeTab::HomeTab() {
         const time_t tt = std::time(nullptr) - maxNextup * 24 * 3600;
         std::strftime(cutoff, sizeof(cutoff), "%Y-%m-%dT%H:%M:%SZ", std::gmtime(&tt));
         std::string query = HTTP::encode_form({
-            {"userId", AppConfig::instance().getUserId()},
-            {"fields", "BasicSyncInfo,Chapters"},
-            {"enableImageTypes", "Primary,Backdrop,Thumb"},
-            {"enableResumable", "false"},
-            {"enableRewatching", "false"},
-            {"nextUpDateCutoff", cutoff},
-            {"limit", std::to_string(pageSize)},
-            {"startIndex", std::to_string(start)},
+            {"UserId", AppConfig::instance().getUserId()},
+            {"Fields", "BasicSyncInfo,Chapters"},
+            {"EnableImageTypes", "Primary,Backdrop,Thumb"},
+            {"EnableResumable", "false"},
+            {"EnableRewatching", "false"},
+            {"NextUpDateCutoff", cutoff},
+            {"Limit", std::to_string(pageSize)},
+            {"StartIndex", std::to_string(start)},
         });
         return fmt::format(fmt::runtime(jellyfin::apiShowNextUp), query);
     });
@@ -90,12 +90,12 @@ void HomeTab::onCreate() {
                     recyler->setPageSize(24);
                     recyler->onQuery([](size_t start, size_t pageSize) {
                         std::string query = HTTP::encode_form({
-                            {"fields", "ChannelInfo"},
-                            {"enableImageTypes", "Primary"},
-                            {"isAiring", "true"},
-                            {"userId", AppConfig::instance().getUserId()},
-                            {"startIndex", std::to_string(start)},
-                            {"limit", std::to_string(pageSize)},
+                            {"Fields", "ChannelInfo"},
+                            {"EnableImageTypes", "Primary"},
+                            {"IsAiring", "true"},
+                            {"UserId", AppConfig::instance().getUserId()},
+                            {"StartIndex", std::to_string(start)},
+                            {"Limit", std::to_string(pageSize)},
                         });
                         return fmt::format(fmt::runtime(jellyfin::apiProgramRecommend), query);
                     });
@@ -114,10 +114,11 @@ void HomeTab::onCreate() {
                     recyler->onQuery([itemId](size_t start, size_t pageSize) {
                         std::string userId = AppConfig::instance().getUserId();
                         std::string query = HTTP::encode_form({
-                            {"enableImageTypes", "Primary"},
-                            {"parentId", itemId},
-                            {"fields", "BasicSyncInfo,Chapters"},
-                            {"limit", std::to_string(pageSize)},
+                            {"EnableImageTypes", "Primary"},
+                            {"ParentId", itemId},
+                            {"Fields", "BasicSyncInfo,Chapters"},
+                            {"Limit", std::to_string(pageSize)},
+                            {"StartIndex", std::to_string(start)},
                         });
                         return fmt::format(fmt::runtime(jellyfin::apiUserLatest), userId, query);
                     });
